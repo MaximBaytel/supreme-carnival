@@ -83,9 +83,9 @@ void MainWidget::initializeGL()
     glEnable(GL_CULL_FACE);
 
 
-	geometries1 = new GeometryEngine(0.001f, { 1,1,-2 }, { 0.0,0.0,-5.0 }, { 0.39f, 1.0f, 0.0f });
+	geometries1 = new GeometryEngine(0.001f, { 1,1,-2 }, { 0.0,0.0,-5.0 }, { 0.39f, 1.0f, 0.0f },":textures/earthmap1k.jpg");
 
-	geometries2 = new GeometryEngine(0.001f, { -1,-1,-2 }, { 1.0,1.0,-5.0 }, { 1.0f, .39f, 0.0f });
+	geometries2 = new GeometryEngine(0.001f, { -1,-1,-2 }, { 1.0,1.0,-5.0 }, { 1.0f, .39f, 0.0f },":textures/moonmap1k.jpg");
 
 
 
@@ -169,21 +169,6 @@ void MainWidget::paintGL()
 	program.setUniformValue("lightPos", QVector3D(0, 0, 2));
 
 	program.setUniformValue("normalMatrix", worldMatrix.normalMatrix());
-
-
- //   QMatrix4x4 matrix;	
- //   matrix.translate(translate);
- //   matrix.rotate(rotation);
-	////matrix.scale(30.0f);
-
- //   // Set modelview-projection matrix
- //   program.setUniformValue("mvMatrix", matrix);
-	//program.setUniformValue("projMatrix", projection);
-	//
-	//
-
-    
-    //program.setUniformValue("texture", 0);
 
     // Draw cube geometry
     geometries1->drawGeometry(&program);

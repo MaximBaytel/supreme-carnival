@@ -2,5 +2,7 @@
     <qresource prefix="/">
         <file>shaders/vshader.glsl</file>
         <file>shaders/fshader.glsl</file>
+        <file>textures/earthmap1k.jpg</file>
+        <file>textures/moonmap1k.jpg</file>
     </qresource>
 </RCC>

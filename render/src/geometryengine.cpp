@@ -7,13 +7,16 @@
 
 // 
 
-GeometryEngine::GeometryEngine(qreal linearSpeed, QVector3D linearMove, QVector3D beginPos,QVector3D color):
+unsigned int GeometryEngine::textureCounter = 0;
+
+GeometryEngine::GeometryEngine(qreal linearSpeed, QVector3D linearMove, QVector3D beginPos,QVector3D color,const QString& texturePath):
 	m_linearSpeed(linearSpeed),m_linearMove(linearMove),m_beginPos(beginPos),m_translate(beginPos),m_color(color),
 	model("./models/sphere.obj",true,false)
 	//model("C:/Users/m.baytel/Dropbox/education/opengl/render/pokeball.obj")
 	//model("C:/Users/m.baytel/Dropbox/education/opengl/render/sphere1.obj",false,true)
-	,indexBuf(QOpenGLBuffer::IndexBuffer)
-{
+	,indexBuf(QOpenGLBuffer::IndexBuffer), m_texture(0), currentTextureIndex(textureCounter++)
+{	
+
 	initializeOpenGLFunctions();
 
     
@@ -24,6 +27,8 @@ GeometryEngine::GeometryEngine(qreal linearSpeed, QVector3D linearMove, QVector3
 
     // Initializes cube geometry and transfers it to VBOs
     initGeometry();
+
+	initTextures(texturePath);
 }
 
 GeometryEngine::~GeometryEngine()
@@ -46,7 +51,6 @@ void GeometryEngine::initGeometry()
 
 	qDebug() << glGetError();
 
-
     //// Transfer index data to VBO 1
 	qDebug() <<  indexBuf.bind();
 	indexBuf.allocate(model.getIbo().data(), model.getIbo().size() * sizeof(GLuint));
@@ -55,10 +59,33 @@ void GeometryEngine::initGeometry()
 	qDebug() << glGetError();
 }
 
+void GeometryEngine::initTextures(const QString& texturePath)
+{
+	// Load cube.png image
+	m_texture = new QOpenGLTexture(QImage(texturePath).mirrored());
+
+	qDebug() << m_texture->width() << m_texture->height();
+
+	// Set nearest filtering mode for texture minification
+	//m_texture->setMinificationFilter(QOpenGLTexture::Nearest);
+
+	// Set bilinear filtering mode for texture magnification
+	m_texture->setMagnificationFilter(QOpenGLTexture::Linear);
+
+	// Wrap texture coordinates by repeating
+	// f.ex. texture coordinate (1.1, 1.2) is same as (0.1, 0.2)
+	m_texture->setWrapMode(QOpenGLTexture::ClampToEdge);
+
+	
+}
+
 //! [2]
 void GeometryEngine::drawGeometry(QOpenGLShaderProgram *program)
 {
 	vao.bind();
+
+	m_texture->bind(currentTextureIndex);
+
 
 	m_translate += m_linearMove * m_linearSpeed;
 
@@ -77,7 +104,7 @@ void GeometryEngine::drawGeometry(QOpenGLShaderProgram *program)
 
 	program->setUniformValue("lightPos", QVector3D(0, 0, 2));
 	program->setUniformValue("baseColor", m_color);
-
+	program->setUniformValue("texture", currentTextureIndex);
 
 
 	program->enableAttributeArray("inputNormal");
@@ -93,8 +120,15 @@ void GeometryEngine::drawGeometry(QOpenGLShaderProgram *program)
 	qDebug() << glGetError();
 
 	program->setAttributeBuffer("vertex1", GL_FLOAT, 0, 3, model.getStride() * sizeof(float));
-	
 
+
+	program->enableAttributeArray("textcord");
+
+	qDebug() << glGetError();
+
+	program->setAttributeBuffer("textcord", GL_FLOAT, 6 * sizeof(float), 2, model.getStride() * sizeof(float));
+
+	
 	qDebug() << glGetError();
     
 
@@ -105,6 +139,7 @@ void GeometryEngine::drawGeometry(QOpenGLShaderProgram *program)
 
 	qDebug() << glGetError();
 
+	m_texture->release();
 	vao.release();
 
 }
