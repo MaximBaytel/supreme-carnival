@@ -8,14 +8,21 @@
 #include <QOpenGLTexture>
 
 #include "model.h"
+#include "modelstate.h"
 
-class GeometryEngine : protected QOpenGLFunctions
+class ModelGeomerty : protected QOpenGLFunctions
 {
 public:
-    GeometryEngine(qreal linearSpeed, QVector3D linearMove, QVector3D beginPos, QVector3D color,const QString& texturePath = QString());
-    virtual ~GeometryEngine();
+
+    ModelGeomerty(const QVariant& state);
+
+    //ModelGeomerty(qreal linearSpeed, QVector3D linearMove, QVector3D beginPos, QVector3D color, const QString& modelPath, bool modelNormalized,const QString& texturePath = QString());
+
+    virtual ~ModelGeomerty();
 
     void drawGeometry(QOpenGLShaderProgram *program);
+
+    QVariant getState() const;
 
 private:
     void initGeometry();
@@ -25,11 +32,15 @@ private:
     QOpenGLBuffer indexBuf;
 	QOpenGLVertexArrayObject vao;
 
-	qreal m_linearSpeed;
-	QVector3D m_linearMove;
-	QVector3D m_beginPos;
-	QVector3D m_translate;
-	QVector3D m_color;
+    ModelState m_state;
+
+//	qreal m_linearSpeed;
+//	QVector3D m_linearMove;
+//	QVector3D m_beginPos;
+//	QVector3D m_translate;
+//	QVector3D m_color;
+
+
 	QOpenGLTexture* m_texture;
 	unsigned int currentTextureIndex;
 	

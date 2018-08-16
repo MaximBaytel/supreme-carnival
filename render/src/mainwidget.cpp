@@ -76,17 +76,48 @@ void MainWidget::initializeGL()
     //initTextures();
 
 
+
     // Enable depth buffer
     glEnable(GL_DEPTH_TEST);
 
     // Enable back face culling
     glEnable(GL_CULL_FACE);
 
+//    qreal linearSpeed;
+//    QVector3D linearMove;
+//    QVector3D currPos;
+//    QVector3D color;
+//    QString modelPath;
+//    bool modelNormalized;
+//    QString texturePath;
+//    QString id;
 
-	geometries1 = new GeometryEngine(0.001f, { 1,1,-2 }, { 0.0,0.0,-5.0 }, { 0.39f, 1.0f, 0.0f },":textures/earthmap1k.jpg");
 
-	geometries2 = new GeometryEngine(0.001f, { -1,-1,-2 }, { 1.0,1.0,-5.0 }, { 1.0f, .39f, 0.0f },":textures/moonmap1k.jpg");
+    QVariantMap geom1;
 
+    geom1["linearSpeed"] = 0.001f;
+    geom1["linearMove"] = QVector3D{ 1,1,-2 };
+    geom1["currPos"] = QVector3D{ 0.0,0.0,-5.0 };
+    geom1["color"] = QVector3D{ 0.39f, 1.0f, 0.0f};
+    geom1["modelPath"] = "./models/sphere.obj";
+    geom1["modelNormalized"] = false;
+    geom1["texturePath"] = ":textures/earthmap1k.jpg";
+    geom1["id"] = "sphere_1";
+
+    QVariantMap geom2;
+
+    geom2["linearSpeed"] = 0.001f;
+    geom2["linearMove"] = QVector3D{ -1,-1,-2 };
+    geom2["currPos"] = QVector3D{ 1.0,1.0,-5.0 };
+    geom2["color"] = QVector3D{ 1.0f, .39f, 0.0f };
+    geom2["modelPath"] = "./models/sphere.obj";
+    geom2["modelNormalized"] = false;
+    geom2["texturePath"] = ":textures/moonmap1k.jpg";
+    geom2["id"] = "sphere_2";
+
+
+    geometries1 = new ModelGeomerty(geom1);
+    geometries2 = new ModelGeomerty(geom2);
 
 
     timer.start(12, this);
@@ -146,6 +177,8 @@ void MainWidget::resizeGL(int w, int h)
 
 
 	projection.setToIdentity();
+
+	projection.scale(1.5);
 
 
 	projection.perspective(fov, aspect, zNear, zFar);

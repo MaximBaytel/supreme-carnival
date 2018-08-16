@@ -1,4 +1,4 @@
-#include "geometryengine.h"
+#include "modelgeometry.h"
 
 
 #include <QVector2D>
@@ -7,14 +7,17 @@
 
 // 
 
-unsigned int GeometryEngine::textureCounter = 0;
+unsigned int ModelGeomerty::textureCounter = 0;
 
-GeometryEngine::GeometryEngine(qreal linearSpeed, QVector3D linearMove, QVector3D beginPos,QVector3D color,const QString& texturePath):
-	m_linearSpeed(linearSpeed),m_linearMove(linearMove),m_beginPos(beginPos),m_translate(beginPos),m_color(color),
-	model("./models/sphere.obj",true,false)
+
+//ModelGeomerty::ModelGeomerty(qreal linearSpeed, QVector3D linearMove, QVector3D beginPos,QVector3D color, const QString& modelPath,bool modelNormalized,const QString& texturePath):
+//	m_linearSpeed(linearSpeed),m_linearMove(linearMove),m_beginPos(beginPos),m_translate(beginPos),m_color(color),
+ModelGeomerty::ModelGeomerty(const QVariant& state):m_state(state),
+	//model("./models/sphere.obj",true,false)
+    model(m_state.modelPath.toLatin1(),!m_state.texturePath.isEmpty(), m_state.modelNormalized),
 	//model("C:/Users/m.baytel/Dropbox/education/opengl/render/pokeball.obj")
 	//model("C:/Users/m.baytel/Dropbox/education/opengl/render/sphere1.obj",false,true)
-	,indexBuf(QOpenGLBuffer::IndexBuffer), m_texture(0), currentTextureIndex(textureCounter++)
+	indexBuf(QOpenGLBuffer::IndexBuffer), m_texture(0), currentTextureIndex(textureCounter++)
 {	
 
 	initializeOpenGLFunctions();
@@ -28,17 +31,17 @@ GeometryEngine::GeometryEngine(qreal linearSpeed, QVector3D linearMove, QVector3
     // Initializes cube geometry and transfers it to VBOs
     initGeometry();
 
-	initTextures(texturePath);
+    initTextures(m_state.texturePath);
 }
 
-GeometryEngine::~GeometryEngine()
+ModelGeomerty::~ModelGeomerty()
 {
     arrayBuf.destroy();
     indexBuf.destroy();
 }
 //! [0]
 
-void GeometryEngine::initGeometry()
+void ModelGeomerty::initGeometry()
 {
 	
 	vao.bind();
@@ -59,7 +62,7 @@ void GeometryEngine::initGeometry()
 	qDebug() << glGetError();
 }
 
-void GeometryEngine::initTextures(const QString& texturePath)
+void ModelGeomerty::initTextures(const QString& texturePath)
 {
 	// Load cube.png image
 	m_texture = new QOpenGLTexture(QImage(texturePath).mirrored());
@@ -80,20 +83,18 @@ void GeometryEngine::initTextures(const QString& texturePath)
 }
 
 //! [2]
-void GeometryEngine::drawGeometry(QOpenGLShaderProgram *program)
+void ModelGeomerty::drawGeometry(QOpenGLShaderProgram *program)
 {
 	vao.bind();
 
 	m_texture->bind(currentTextureIndex);
 
-
-	m_translate += m_linearMove * m_linearSpeed;
-
 	qDebug() << glGetError();
 
+    m_state.currPos +=  m_state.linearMove * m_state.linearSpeed;
 
 	QMatrix4x4 mvMatrix;
-	mvMatrix.translate(m_translate);
+    mvMatrix.translate(m_state.currPos);
 	
 	//matrix.scale(30.0f);
 
@@ -103,7 +104,8 @@ void GeometryEngine::drawGeometry(QOpenGLShaderProgram *program)
 	//program->setUniformValue("normalMatrix", matrix.normalMatrix());
 
 	program->setUniformValue("lightPos", QVector3D(0, 0, 2));
-	program->setUniformValue("baseColor", m_color);
+    qDebug() << m_state.color;
+    program->setUniformValue("baseColor", m_state.color);
 	program->setUniformValue("texture", currentTextureIndex);
 
 
@@ -142,4 +144,9 @@ void GeometryEngine::drawGeometry(QOpenGLShaderProgram *program)
 	m_texture->release();
 	vao.release();
 
+}
+
+QVariant ModelGeomerty::getState() const
+{
+    return m_state.toSavedState();
 }

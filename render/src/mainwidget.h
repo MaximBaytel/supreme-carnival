@@ -1,7 +1,7 @@
 #ifndef MAINWIDGET_H
 #define MAINWIDGET_H
 
-#include "geometryengine.h"
+#include "modelgeometry.h"
 
 #include <QOpenGLWidget>
 #include <QOpenGLFunctions>
@@ -12,7 +12,7 @@
 #include <QOpenGLShaderProgram>
 #include <QOpenGLTexture>
 
-class GeometryEngine;
+class ModelGeomerty;
 
 class MainWidget : public QOpenGLWidget, protected QOpenGLFunctions
 {
@@ -37,8 +37,8 @@ protected:
 private:
     QBasicTimer timer;
     QOpenGLShaderProgram program;
-    GeometryEngine *geometries1;
-	GeometryEngine *geometries2;
+    ModelGeomerty *geometries1;
+	ModelGeomerty *geometries2;
 
     //QOpenGLTexture *texture;
 
