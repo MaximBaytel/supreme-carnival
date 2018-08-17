@@ -40,6 +40,4 @@ public:
 
 };
 
-extern Model CurrentModel;
-
 #endif //__MODEL_H__

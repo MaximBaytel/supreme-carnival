@@ -18,15 +18,22 @@ ModelState::ModelState(QVariant savedState)
 
     QVariantMap map = savedState.toMap();
 
-    QString texturePath = map.value("texturePath").toString();
+    QString mPath = map.value("modelPath").toString();
 
-    if (texturePath.length()<=0){
+    if (mPath.length()<=0){
         qDebug() << "texturePath is incorrect";
         return;
     }
 
     for(auto k:map.keys())
-        setProperty(k.toLatin1(),map.value(k));
+    {
+        if (k == "linearMove" || k == "currPos" || k == "color"){
+           QStringList list =  map.value(k).toString().split(",");
+            setProperty(k.toLatin1(),QVector3D(list.value(0).toFloat(),list.value(1).toFloat(),list.value(2).toFloat()));
+        }
+        else
+            setProperty(k.toLatin1(),map.value(k));
+    }
 
 }
 
@@ -39,6 +46,16 @@ QVariant ModelState::toSavedState() const
     for (int i=0; i<metaobject->propertyCount(); ++i)
     {
         const QMetaProperty metaproperty = metaobject->property(i);
+
+        if (metaproperty.type() == QMetaType::QVector3D)
+        {
+            QVector3D temp = property(metaproperty.name()).value<QVector3D>();
+
+            QString str = QString::asprintf("%f,%f,%f",temp.x(),temp.y(),temp.z());
+
+            res.insert(metaproperty.name(),str);
+        }
+
         res.insert(metaproperty.name(), property(metaproperty.name()).toString());
     }
 

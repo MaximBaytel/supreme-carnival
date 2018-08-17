@@ -13,7 +13,6 @@ texturePath - the path to the texture file
 modelPath - the path to the obj model file
 */
 
-
 class ModelState: public QObject
 {
 	Q_OBJECT    
@@ -32,6 +31,7 @@ class ModelState: public QObject
     Q_PROPERTY(QString modelPath MEMBER modelPath )
     Q_PROPERTY(bool modelNormalized MEMBER modelNormalized )
     Q_PROPERTY(QString texturePath MEMBER texturePath )
+    Q_PROPERTY(bool hasTextureCoord MEMBER hasTextureCoord)
     Q_PROPERTY(QString id MEMBER id )
 
 
@@ -74,8 +74,9 @@ public:
     bool modelNormalized;
     QString texturePath;
     QString id;
-	
+    bool hasTextureCoord;
 };
+
 
 
 #endif

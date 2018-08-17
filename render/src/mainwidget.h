@@ -2,6 +2,7 @@
 #define MAINWIDGET_H
 
 #include "modelgeometry.h"
+#include "modelmanager.h"
 
 #include <QOpenGLWidget>
 #include <QOpenGLFunctions>
@@ -37,8 +38,11 @@ protected:
 private:
     QBasicTimer timer;
     QOpenGLShaderProgram program;
-    ModelGeomerty *geometries1;
-	ModelGeomerty *geometries2;
+
+    QList<ModelGeomerty*> m_geometries;
+
+//    ModelGeomerty *geometries1;
+//	ModelGeomerty *geometries2;
 
     //QOpenGLTexture *texture;
 
@@ -50,6 +54,8 @@ private:
 
 	
     QQuaternion rotation;
+
+    ModelManager m_manager;
 	
 };
 

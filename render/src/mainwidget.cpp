@@ -6,21 +6,19 @@
 #include <math.h>
 
 MainWidget::MainWidget(QWidget *parent) :
-    QOpenGLWidget(parent),
-    geometries1(0),
-	geometries2(0),
-    //texture(0),
-	angularSpeed(0)
+    QOpenGLWidget(parent),    
+    angularSpeed(0),
+    m_manager("./geometry.json")
 {
 }
 
 MainWidget::~MainWidget()
-{
-    
+{    
     makeCurrent();
-   // delete texture;
-    delete geometries1;
-	delete geometries2;
+
+    for(auto geom:m_geometries)
+        delete geom;
+
     doneCurrent();
 }
 
@@ -83,41 +81,42 @@ void MainWidget::initializeGL()
     // Enable back face culling
     glEnable(GL_CULL_FACE);
 
-//    qreal linearSpeed;
-//    QVector3D linearMove;
-//    QVector3D currPos;
-//    QVector3D color;
-//    QString modelPath;
-//    bool modelNormalized;
-//    QString texturePath;
-//    QString id;
 
 
-    QVariantMap geom1;
+//    QVariantMap geom1;
 
-    geom1["linearSpeed"] = 0.001f;
-    geom1["linearMove"] = QVector3D{ 1,1,-2 };
-    geom1["currPos"] = QVector3D{ 0.0,0.0,-5.0 };
-    geom1["color"] = QVector3D{ 0.39f, 1.0f, 0.0f};
-    geom1["modelPath"] = "./models/sphere.obj";
-    geom1["modelNormalized"] = false;
-    geom1["texturePath"] = ":textures/earthmap1k.jpg";
-    geom1["id"] = "sphere_1";
+//    geom1["linearSpeed"] = 0.001f;
+//    geom1["linearMove"] =  "1,1,-2";
+//    geom1["currPos"] = "0.0,0.0,-5.0";
+//    geom1["color"] = "0.39f,1.0f,0.0f";
+//    geom1["modelPath"] = "./models/sphere.obj";
+//    geom1["modelNormalized"] = false;
+//    geom1["texturePath"] = ":textures/earthmap1k.jpg";
+//    geom1["id"] = "sphere_1";
 
-    QVariantMap geom2;
+//    QVariantMap geom2;
 
-    geom2["linearSpeed"] = 0.001f;
-    geom2["linearMove"] = QVector3D{ -1,-1,-2 };
-    geom2["currPos"] = QVector3D{ 1.0,1.0,-5.0 };
-    geom2["color"] = QVector3D{ 1.0f, .39f, 0.0f };
-    geom2["modelPath"] = "./models/sphere.obj";
-    geom2["modelNormalized"] = false;
-    geom2["texturePath"] = ":textures/moonmap1k.jpg";
-    geom2["id"] = "sphere_2";
+//    geom2["linearSpeed"] = 0.001f;
+//    geom2["linearMove"] = "-1,-1,-2";
+//    geom2["currPos"] = "1.0,1.0,-5.0";
+//    geom2["color"] = "1.0f,0.39f,0.0f";
+//    geom2["modelPath"] = "./models/sphere.obj";
+//    geom2["modelNormalized"] = false;
+//    geom2["texturePath"] = ":textures/moonmap1k.jpg";
+//    geom2["id"] = "sphere_2";
 
 
-    geometries1 = new ModelGeomerty(geom1);
-    geometries2 = new ModelGeomerty(geom2);
+    for(auto model: m_manager.models()){
+        m_geometries.push_back(new ModelGeomerty(model));
+    }
+
+
+//    geometries1 = new ModelGeomerty(geom1);
+//    geometries2 = new ModelGeomerty(geom2);
+
+    //m_manager.setModels(QList<QVariant>() << geom1 << geom2);
+
+    //m_manager.save();
 
 
     timer.start(12, this);
@@ -203,7 +202,10 @@ void MainWidget::paintGL()
 
 	program.setUniformValue("normalMatrix", worldMatrix.normalMatrix());
 
-    // Draw cube geometry
-    geometries1->drawGeometry(&program);
-	geometries2->drawGeometry(&program);
+
+    for(auto geom:m_geometries)
+        geom->drawGeometry(&program);
+
+//    geometries1->drawGeometry(&program);
+//	geometries2->drawGeometry(&program);
 }

@@ -14,7 +14,7 @@ unsigned int ModelGeomerty::textureCounter = 0;
 //	m_linearSpeed(linearSpeed),m_linearMove(linearMove),m_beginPos(beginPos),m_translate(beginPos),m_color(color),
 ModelGeomerty::ModelGeomerty(const QVariant& state):m_state(state),
 	//model("./models/sphere.obj",true,false)
-    model(m_state.modelPath.toLatin1(),!m_state.texturePath.isEmpty(), m_state.modelNormalized),
+    model(m_state.modelPath.toLatin1(),m_state.hasTextureCoord, m_state.modelNormalized),
 	//model("C:/Users/m.baytel/Dropbox/education/opengl/render/pokeball.obj")
 	//model("C:/Users/m.baytel/Dropbox/education/opengl/render/sphere1.obj",false,true)
 	indexBuf(QOpenGLBuffer::IndexBuffer), m_texture(0), currentTextureIndex(textureCounter++)
@@ -31,7 +31,8 @@ ModelGeomerty::ModelGeomerty(const QVariant& state):m_state(state),
     // Initializes cube geometry and transfers it to VBOs
     initGeometry();
 
-    initTextures(m_state.texturePath);
+    if (m_state.texturePath.length()>0 && m_state.hasTextureCoord)
+        initTextures(m_state.texturePath);
 }
 
 ModelGeomerty::~ModelGeomerty()
@@ -87,7 +88,8 @@ void ModelGeomerty::drawGeometry(QOpenGLShaderProgram *program)
 {
 	vao.bind();
 
-	m_texture->bind(currentTextureIndex);
+    if (m_texture)
+        m_texture->bind(currentTextureIndex);
 
 	qDebug() << glGetError();
 
@@ -141,7 +143,9 @@ void ModelGeomerty::drawGeometry(QOpenGLShaderProgram *program)
 
 	qDebug() << glGetError();
 
-	m_texture->release();
+    if (m_texture)
+        m_texture->release();
+
 	vao.release();
 
 }

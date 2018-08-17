@@ -1,0 +1,35 @@
+[
+    {
+        "color": "0.39f,1.0f,0.0f",
+        "currPos": "0.0,0.0,-5.0",
+        "hasTextureCoord": "true",
+        "id": "sphere_1",
+        "linearMove": "1,1,-2",
+        "linearSpeed": 0.0010000000474974513,
+        "modelNormalized": false,
+        "modelPath": "./models/sphere.obj",
+        "texturePath": ":textures/earthmap1k.jpg"
+    },
+    {
+        "color": "1.0f,0.39f,0.0f",
+        "currPos": "1.0,1.0,-5.0",
+        "hasTextureCoord": "true",
+        "id": "sphere_2",
+        "linearMove": "-1,-1,-2",
+        "linearSpeed": 0.0010000000474974513,
+        "modelNormalized": false,
+        "modelPath": "./models/sphere.obj",
+        "texturePath": ":textures/moonmap1k.jpg"
+    },
+    {
+        "color": "1.0f,0.39f,0.0f",
+        "currPos": "-1.0,-1.0,-5.0",
+        "hasTextureCoord": "true",
+        "id": "sphere_3",
+        "linearMove": "-1,-1,-2",
+        "linearSpeed": 0,
+        "modelNormalized": false,
+        "modelPath": "./models/sphere.obj",
+        "texturePath": null
+    }
+]
