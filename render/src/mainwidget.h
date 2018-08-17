@@ -32,12 +32,12 @@ protected:
     void resizeGL(int w, int h) override;
     void paintGL() override;
 
-    void initShaders();
+    //void initShaders();
     //void initTextures();
 
 private:
     QBasicTimer timer;
-    QOpenGLShaderProgram program;
+    //QOpenGLShaderProgram program;
 
     QList<ModelGeomerty*> m_geometries;
 

@@ -70,7 +70,7 @@ void MainWidget::initializeGL()
 
     glClearColor(0, 0, 0, 1);
 
-    initShaders();
+    //initShaders();
     //initTextures();
 
 
@@ -122,32 +122,7 @@ void MainWidget::initializeGL()
     timer.start(12, this);
 }
 
-//! [3]
-void MainWidget::initShaders()
-{
-    // Compile vertex shader
-    if (!program.addShaderFromSourceFile(QOpenGLShader::Vertex, ":/shaders/vshader.glsl"))
-        close();
 
-    // Compile fragment shader
-    if (!program.addShaderFromSourceFile(QOpenGLShader::Fragment, ":/shaders/fshader.glsl"))
-        close();
-
-    // Link shader pipeline
-    if (!program.link())
-        close();
-
-    // Bind shader pipeline for use
-    if (!program.bind())
-        close();
-
-	for (QOpenGLShader* shader:program.shaders()) {
-		if (shader)
-			qDebug() << shader->log();
-	}
-
-	qDebug() << program.log();
-}
 
 
 //void MainWidget::initTextures()
@@ -196,15 +171,14 @@ void MainWidget::paintGL()
 
 	worldMatrix.rotate(rotation);
 
-	program.setUniformValue("projMatrix", projection);
-	program.setUniformValue("worldMatrix", worldMatrix);
-	program.setUniformValue("lightPos", QVector3D(0, 0, 2));
-
-	program.setUniformValue("normalMatrix", worldMatrix.normalMatrix());
+//	program.setUniformValue("projMatrix", projection);
+//	program.setUniformValue("worldMatrix", worldMatrix);
+//	program.setUniformValue("lightPos", QVector3D(0, 0, 2));
+    //program.setUniformValue("normalMatrix", worldMatrix.normalMatrix());
 
 
     for(auto geom:m_geometries)
-        geom->drawGeometry(&program);
+        geom->drawGeometry(projection,worldMatrix,{0, 0, 2},worldMatrix.normalMatrix());
 
 //    geometries1->drawGeometry(&program);
 //	geometries2->drawGeometry(&program);

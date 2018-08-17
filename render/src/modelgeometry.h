@@ -20,13 +20,14 @@ public:
 
     virtual ~ModelGeomerty();
 
-    void drawGeometry(QOpenGLShaderProgram *program);
+    void drawGeometry(const QMatrix4x4& projection, const QMatrix4x4& worldMatrix, QVector3D lightPos, const QMatrix3x3 &normalMatrix);
 
     QVariant getState() const;
 
 private:
     void initGeometry();
 	void initTextures(const QString& texturePath);
+    void initShaders();
 
     QOpenGLBuffer arrayBuf;
     QOpenGLBuffer indexBuf;
@@ -43,6 +44,8 @@ private:
 
 	QOpenGLTexture* m_texture;
 	unsigned int currentTextureIndex;
+
+    QOpenGLShaderProgram program;
 	
 	Model model;
 

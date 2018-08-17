@@ -33,7 +33,11 @@ ModelGeomerty::ModelGeomerty(const QVariant& state):m_state(state),
 
     if (m_state.texturePath.length()>0 && m_state.hasTextureCoord)
         initTextures(m_state.texturePath);
+
+    initShaders();
 }
+
+
 
 ModelGeomerty::~ModelGeomerty()
 {
@@ -83,9 +87,17 @@ void ModelGeomerty::initTextures(const QString& texturePath)
 	
 }
 
-//! [2]
-void ModelGeomerty::drawGeometry(QOpenGLShaderProgram *program)
+
+void ModelGeomerty::drawGeometry(const QMatrix4x4& projection,const QMatrix4x4& worldMatrix,QVector3D lightPos,const QMatrix3x3& normalMatrix)
 {
+
+    program.bind();
+
+    program.setUniformValue("projMatrix", projection);
+    program.setUniformValue("worldMatrix", worldMatrix);
+    program.setUniformValue("lightPos", lightPos);
+    program.setUniformValue("normalMatrix", normalMatrix);
+
 	vao.bind();
 
     if (m_texture)
@@ -101,42 +113,42 @@ void ModelGeomerty::drawGeometry(QOpenGLShaderProgram *program)
 	//matrix.scale(30.0f);
 
 	// Set modelview-projection matrix
-	program->setUniformValue("mvMatrix", mvMatrix);
+    program.setUniformValue("mvMatrix", mvMatrix);
 	
 	//program->setUniformValue("normalMatrix", matrix.normalMatrix());
 
-	program->setUniformValue("lightPos", QVector3D(0, 0, 2));
+    program.setUniformValue("lightPos", QVector3D(0, 0, 2));
     qDebug() << m_state.color;
-    program->setUniformValue("baseColor", m_state.color);
-	program->setUniformValue("texture", currentTextureIndex);
+    program.setUniformValue("baseColor", m_state.color);
+    program.setUniformValue("texture", currentTextureIndex);
 
 
-	program->enableAttributeArray("inputNormal");
-	program->setAttributeBuffer("inputNormal", GL_FLOAT, 3*sizeof(float), 3, model.getStride()* sizeof(float));
+    program.enableAttributeArray("inputNormal");
+    program.setAttributeBuffer("inputNormal", GL_FLOAT, 3*sizeof(float), 3, model.getStride()* sizeof(float));
 
-	qDebug() << program->log();
+    qDebug() << program.log();
 
 
     // Tell OpenGL programmable pipeline how to locate vertex position data
     //int vertexLocation = program->attributeLocation("vertex1");
-    program->enableAttributeArray("vertex1");
+    program.enableAttributeArray("vertex1");
 
 	qDebug() << glGetError();
 
-	program->setAttributeBuffer("vertex1", GL_FLOAT, 0, 3, model.getStride() * sizeof(float));
+    program.setAttributeBuffer("vertex1", GL_FLOAT, 0, 3, model.getStride() * sizeof(float));
 
 
-	program->enableAttributeArray("textcord");
+    program.enableAttributeArray("textcord");
 
 	qDebug() << glGetError();
 
-	program->setAttributeBuffer("textcord", GL_FLOAT, 6 * sizeof(float), 2, model.getStride() * sizeof(float));
+    program.setAttributeBuffer("textcord", GL_FLOAT, 6 * sizeof(float), 2, model.getStride() * sizeof(float));
 
 	
 	qDebug() << glGetError();
     
 
-	qDebug() << program->log();
+    qDebug() << program.log();
 
     
 	glDrawArrays(GL_TRIANGLES, 0, model.getIbo().size());
@@ -148,9 +160,33 @@ void ModelGeomerty::drawGeometry(QOpenGLShaderProgram *program)
 
 	vao.release();
 
+    program.release();
+
 }
 
 QVariant ModelGeomerty::getState() const
 {
     return m_state.toSavedState();
+}
+
+void ModelGeomerty::initShaders()
+{
+    // Compile vertex shader
+    program.addShaderFromSourceFile(QOpenGLShader::Vertex, ":/shaders/vshader.glsl");
+
+
+    if (m_state.texturePath.length()>0 && m_state.hasTextureCoord)
+        program.addShaderFromSourceFile(QOpenGLShader::Fragment, ":/shaders/fshader.glsl");
+    else
+        program.addShaderFromSourceFile(QOpenGLShader::Fragment, ":/shaders/fshaderwotexture.glsl");
+
+    program.link();
+    program.bind();
+
+    for (QOpenGLShader* shader:program.shaders()) {
+        if (shader)
+            qDebug() << shader->log();
+    }
+
+    qDebug() << program.log();
 }

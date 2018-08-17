@@ -4,5 +4,6 @@
         <file>shaders/fshader.glsl</file>
         <file>textures/earthmap1k.jpg</file>
         <file>textures/moonmap1k.jpg</file>
+        <file>shaders/fshaderwotexture.glsl</file>
     </qresource>
 </RCC>
