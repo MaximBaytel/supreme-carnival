@@ -62,6 +62,15 @@ QVariant ModelState::toSavedState() const
     return res;
 }
 
+ModelState::ModelState(const ModelState &other):ModelState(other.toSavedState())
+{
+}
+
+bool operator ==(const ModelState &l, const ModelState &r)
+{
+    return l.id == r.id;
+}
+
 //qreal ModelState::linearSpeed() const
 //{
 //    return linearSpeed;

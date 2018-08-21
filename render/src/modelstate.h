@@ -17,14 +17,6 @@ class ModelState: public QObject
 {
 	Q_OBJECT    
     Q_PROPERTY(qreal linearSpeed MEMBER linearSpeed)
-    //Q_PROPERTY(QVector3D linearMove READ linearMove WRITE setLinearMove)
-    //Q_PROPERTY(QVector3D currPos READ currPos WRITE setCurrPos)
-    //Q_PROPERTY(QVector3D color READ color WRITE setColor)
-    //Q_PROPERTY(QString modelPath READ modelPath WRITE setModelPath)
-    //Q_PROPERTY(bool modelNormalized READ modelNormalized WRITE setModelNormalized)
-    //Q_PROPERTY(QString texturePath READ texturePath WRITE setTexturePath)
-    //Q_PROPERTY(QString id READ id WRITE setId)
-
     Q_PROPERTY(QVector3D linearMove MEMBER linearMove )
     Q_PROPERTY(QVector3D currPos MEMBER currPos)
     Q_PROPERTY(QVector3D color MEMBER color )
@@ -34,37 +26,16 @@ class ModelState: public QObject
     Q_PROPERTY(bool hasTextureCoord MEMBER hasTextureCoord)
     Q_PROPERTY(QString id MEMBER id )
 
-
 public:
 	ModelState(QString texturePath);
-
 	ModelState(QVariant savedState);
 
     QVariant toSavedState() const;
 
-//	qreal linearSpeed() const;
-//	void setLinearSpeed(qreal v);
+    friend bool operator == (const ModelState& l,const ModelState& r);
 
-//    QVector3D linearMove() const;
-//    void setLinearMove(const QVector3D& move);
+    ModelState(const ModelState& other);
 
-//    QVector3D currPos() const;
-//    void setCurrPos(const QVector3D& pos);
-
-//    QVector3D color() const;
-//    void setColor(const QVector3D& col);
-
-//    QString modelPath() const;
-//    void setModelPath(const QString& mPath);
-
-//    bool modelNormalized() const;
-//    void setModelNormalized(bool n);
-
-//    QString texturePath() const;
-//    void setTexturePath(const QString& tPath);
-
-//    QString id() const;
-//    void setId(QString i);
 
     qreal linearSpeed;
     QVector3D linearMove;
